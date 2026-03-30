@@ -11,7 +11,6 @@ const PORT = process.env.PORT || 5000
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://estate-hub-frontend.onrender.com",
   "https://estatehub-frontend.onrender.com",
 ];
 
