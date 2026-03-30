@@ -9,11 +9,21 @@ dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 5000
 
-app.use(cors({ origin:[ 'http://localhost:5173',
-      "https://estate-hub-frontend.onrender.com",
-],
-credentials: true }))
-app.use(express.json())
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://estate-hub-frontend.onrender.com"
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("CORS not allowed"));
+    }
+  },
+  credentials: true
+}));
 
 app.get('/', (req, res) => res.json({ message: 'EstateHub API is running' }))
 
