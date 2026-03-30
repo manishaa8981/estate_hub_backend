@@ -13,4 +13,18 @@ const pool = new Pool({
   database: process.env.DB_NAME,
 })
 
+// Test connection on startup and log clearly
+pool.connect()
+  .then(client => {
+    console.log(`✅ PostgreSQL connected — ${process.env.DB_NAME}@${process.env.DB_HOST}:${process.env.DB_PORT || 5432}`)
+    client.release()
+  })
+  .catch(err => {
+    console.error('❌ PostgreSQL connection failed:')
+    console.error(`   Host: ${process.env.DB_HOST}:${process.env.DB_PORT || 5432}`)
+    console.error(`   DB:   ${process.env.DB_NAME}`)
+    console.error(`   User: ${process.env.DB_USER}`)
+    console.error(`   Error: ${err.message}`)
+  })
+
 export default pool
