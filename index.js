@@ -10,20 +10,33 @@ const app = express()
 const PORT = process.env.PORT || 5000
 
 const allowedOrigins = [
-  "http://localhost:5173",
-  "https://estatehub-frontend.onrender.com",
-];
+  'http://localhost:5173',
+  'https://estate-hub-frontend.onrender.com',
+  'https://estatehub-frontend.onrender.com',
+]
 
-app.use(cors({
-  origin: function (origin, callback) {
+const corsOptions = {
+  origin: (origin, callback) => {
+    // allow no-origin requests (curl, Postman, mobile) and listed origins
     if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
+      callback(null, true)
     } else {
-      callback(new Error("CORS not allowed"));
+      console.warn(`CORS blocked origin: ${origin}`)
+      callback(new Error(`CORS not allowed for origin: ${origin}`))
     }
   },
-  credentials: true
-}));
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}
+
+// Apply CORS to all routes
+app.use(cors(corsOptions))
+
+// Explicitly handle preflight OPTIONS requests for all routes
+app.options('*', cors(corsOptions))
+
+app.use(express.json())
 
 app.get('/', (req, res) => res.json({ message: 'EstateHub API is running' }))
 
