@@ -7,14 +7,12 @@ const { Pool } = pg
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  ssl: { rejectUnauthorized: false },
 })
 
 pool.connect()
   .then(client => {
-    console.log('✅ PostgreSQL connected (Neon)')
+    console.log('PostgreSQL connected via DATABASE_URL')
     client.release()
   })
   .catch(err => {
