@@ -17,36 +17,32 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: (origin, callback) => {
-    // allow no-origin requests (curl, Postman, mobile) and listed origins
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true)
     } else {
       console.warn(`CORS blocked origin: ${origin}`)
-      callback(new Error(`CORS not allowed for origin: ${origin}`))
+      callback(new Error('Not allowed by CORS'))
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
 }
 
-// Apply CORS to all routes
 app.use(cors(corsOptions))
+app.use(express.json()) // VERY IMPORTANT (fixes req.body undefined)
 
-// Explicitly handle preflight OPTIONS requests for all routes
-app.options('*', cors(corsOptions))
-
-app.use(express.json())
-
-app.get('/', (req, res) => res.json({ message: 'EstateHub API is running' }))
+app.get('/', (req, res) => {
+  res.json({ message: 'EstateHub API is running.' })
+})
 
 app.use('/api/auth', authRoutes)
 app.use('/api/favourites', favouritesRoutes)
 
-// Global error handler
+
 app.use((err, req, res, next) => {
-  console.error(err)
+  console.error('Error:', err.message)
   res.status(500).json({ error: 'Internal server error' })
 })
 
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`))
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`)
+})
